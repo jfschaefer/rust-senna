@@ -1,0 +1,10 @@
+[package]
+name = "rustsenna"
+version = "0.0.1"
+authors = ["jfschaefer <j.schaefer@jacobs-university.de>"]
+
+[dependencies]
+libc = "0.2.4"
+
+[lib]
+name="rustsenna"
