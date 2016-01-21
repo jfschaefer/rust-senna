@@ -1,0 +1,25 @@
+CC=gcc
+FLAGS=-Wall
+OUT_DIR?=out
+SENNA_DIR?=senna
+
+SENNA_SOURCES=$(wildcard $(SENNA_DIR)/*.c)
+OBJECTS=$(notdir $(patsubst %.c,%.o,$(SENNA_SOURCES)))
+
+target: static_lib
+
+static_lib: $(OUT_DIR)/libc_wrapper.a
+
+$(OUT_DIR)/libc_wrapper.a: $(OBJECTS) $(OUT_DIR)/c_wrapper.o
+	ar -crs $(OUT_DIR)/libc_wrapper.a $(addprefix $(OUT_DIR)/,$(OBJECTS)) $(OUT_DIR)/c_wrapper.o
+
+# special rule for c_wrapper.o
+$(OUT_DIR)/c_wrapper.o: src/c_wrapper.c
+	$(CC) -c $(FLAGS) src/c_wrapper.c -o $(OUT_DIR)/c_wrapper.o -I$(SENNA_DIR)
+
+%.o: $(addprefix $(SENNA_DIR)/,$(notdir %.c))
+	$(CC) -c $(FLAGS) $< -o $(OUT_DIR)/$@
+
+clean:
+	rm -f $(wildcard $(OUT_DIR)/*.o)
+
