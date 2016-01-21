@@ -14,7 +14,7 @@
  * allocates hash tables labels and provides a pointer to the data structure
  * has to be freed using freeSenna
  */
-SENNA* createSenna(const char * opt_path) {
+SENNA* sennaCreate(const char * opt_path) {
     SENNA* senna = (SENNA*) malloc(sizeof(SENNA));
     if (!senna) {
         fprintf(stderr, "rust-senna: Fatal: Malloc failed\n");
@@ -68,16 +68,11 @@ SENNA* createSenna(const char * opt_path) {
     return senna;
 }
 
-void freeSenna(SENNA *senna) {
+void sennaFree(SENNA *senna) {
     SENNA_Hash_free(senna->word_hash);
     SENNA_Hash_free(senna->caps_hash);
     SENNA_Hash_free(senna->suff_hash);
     SENNA_Hash_free(senna->gazt_hash);
-
-    SENNA_Hash_free(senna->gazl_hash);
-    SENNA_Hash_free(senna->gazm_hash);
-    SENNA_Hash_free(senna->gazo_hash);
-    SENNA_Hash_free(senna->gazp_hash);
 
     SENNA_Hash_free(senna->gazl_hash);
     SENNA_Hash_free(senna->gazm_hash);
@@ -107,7 +102,7 @@ void freeSenna(SENNA *senna) {
 }
 
 
-void parseSentence(SENNA *senna, const char *sentence, unsigned int options) {
+void sennaParseSentence(SENNA *senna, const char *sentence, unsigned int options) {
     // Tokenize
     SENNA_Tokens *tokens = SENNA_Tokenizer_tokenize(senna->tokenizer, sentence);
     senna->lastSentence.tokens = tokens;
@@ -155,7 +150,7 @@ void parseSentence(SENNA *senna, const char *sentence, unsigned int options) {
 
 
 
-int getNumberOfWords(const SENNA *senna) {
+unsigned int sennaGetNumberOfWords(const SENNA *senna) {
     TOKEN_DEF_CHECK();
     return senna->lastSentence.tokens->n;
 }

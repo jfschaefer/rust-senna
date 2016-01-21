@@ -79,11 +79,20 @@ typedef struct SENNA_ SENNA;
  * allocates hash tables labels and provides a pointer to the data structure
  * has to be freed using freeSenna
  */
-SENNA* createSenna(const char * opt_path);
+SENNA* sennaCreate(const char * opt_path);
 
-void freeSenna(SENNA *senna);
+/*
+ * frees the memory allocated for senna
+ */
+void sennaFree(SENNA *senna);
 
-void parseSentence(SENNA *senna, const char *sentence, unsigned int options);
+/*
+ * parses a sentence and stores the results in the senna struct
+ */
+void sennaParseSentence(SENNA *senna, const char *sentence, unsigned int options);
 
-int getNumberOfWords(const SENNA *senna);
+/*
+ * returns the number of words in the previously parsed sentence
+ */
+unsigned int sennaGetNumberOfWords(const SENNA *senna);
 
