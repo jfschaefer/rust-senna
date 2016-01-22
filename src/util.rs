@@ -1,27 +1,9 @@
-//! Some helper functioniality
+//! Some helper functions
 
 use std::ffi::CString;
 
-use senna::Senna;
+use senna::{Senna, ParseOption};
 use c_signatures::{sennaParseSentence, sennaGetNumberOfWords};
-
-/// Specifies which information shall be generated when parsing a sentence
-pub enum ParseOption {
-    TokenizeOnly,
-    GeneratePOS,
-    GeneratePSG,      // includes POS generation
-}
-
-impl ParseOption {
-    /// Convert to the corresponding values in `c_wrapper.h`
-    fn convert(&self) -> u32 {
-        match *self {
-            ParseOption::TokenizeOnly => 0,
-            ParseOption::GeneratePOS  => 1,
-            ParseOption::GeneratePSG  => 2,
-        }
-    }
-}
 
 /// Parses one sentence
 pub fn senna_parse(senna: &mut Senna, sentence: &str, option: ParseOption) {
@@ -31,7 +13,7 @@ pub fn senna_parse(senna: &mut Senna, sentence: &str, option: ParseOption) {
     }
 }
 
-pub fn get_last_number_of_words(senna: &Senna) -> u32{
+pub fn get_last_number_of_words(senna: &Senna) -> u32 {
     unsafe {
         sennaGetNumberOfWords(senna.senna_ptr)
     }

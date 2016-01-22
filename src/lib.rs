@@ -8,5 +8,5 @@ extern crate libc;
 mod c_signatures;
 mod util;
 pub mod senna;
-pub mod tokenizer;
+pub mod sentence;
 

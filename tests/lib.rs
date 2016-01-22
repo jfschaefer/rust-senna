@@ -4,7 +4,6 @@
 extern crate rustsenna;
 
 use rustsenna::senna::Senna;
-use rustsenna::tokenizer::Tokenizer;
 
 #[test]
 /// Tokenization returns correct number of words
