@@ -156,3 +156,14 @@ unsigned int sennaGetNumberOfWords(const SENNA *senna) {
 }
 
 
+unsigned int sennaGetStartOffset(const SENNA* senna, unsigned int token) {
+    TOKEN_DEF_CHECK();
+    return senna->lastSentence.tokens->start_offset[token];
+}
+
+unsigned int sennaGetEndOffset(const SENNA* senna, unsigned int token) {
+    TOKEN_DEF_CHECK();
+    return senna->lastSentence.tokens->end_offset[token];
+}
+
+

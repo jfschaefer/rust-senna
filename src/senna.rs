@@ -1,12 +1,12 @@
 //! The initialization functionality
 
-use c_signatures::{sennaCreate, sennaFree};
+use c_signatures::*;
 
 use libc::c_void;
 use std::ffi::CString;
 
-use util::{senna_parse, get_last_number_of_words};   // helper functionality
-use sentence::Sentence;
+use util::*;   // helper functionality
+use sentence::{Sentence, Word};
 
 
 
@@ -53,14 +53,22 @@ impl <'a> Senna {
     /// (warning: Does full tokenization, i.e. relatively costly)
     pub fn get_number_of_words(&mut self, sentence: &str) -> u32 {
         senna_parse(self, sentence, ParseOption::TokenizeOnly);
-        get_last_number_of_words(self)
+        unsafe { sennaGetNumberOfWords(self.senna_ptr) }
     }
 
 
     pub fn parse(&mut self, sentence: &'a str, options: ParseOption) -> Sentence<'a> {
         senna_parse(self, sentence, options);
+        let n = unsafe { sennaGetNumberOfWords(self.senna_ptr) };
+        let mut words: Vec<Word> = Vec::with_capacity(n as usize);
 
-        Sentence::new(sentence, vec![])
+        for i in 0..n {
+            let start = unsafe { sennaGetStartOffset(self.senna_ptr, i) } as usize;
+            let end = unsafe { sennaGetEndOffset(self.senna_ptr, i) } as usize;
+            words.push(Word::new(start, end, &sentence[start..end]));
+        }
+
+        Sentence::new(sentence, words)
     }
 }
 

@@ -10,4 +10,6 @@ extern "C" {
     pub fn sennaParseSentence(senna: *mut c_void, sentence: *const c_char, options: c_uint);
 
     pub fn sennaGetNumberOfWords(senna: *const c_void) -> c_uint;
+    pub fn sennaGetStartOffset(senna: *const c_void, token: c_uint) -> c_uint;
+    pub fn sennaGetEndOffset(senna: *const c_void, token: c_uint) -> c_uint;
 }

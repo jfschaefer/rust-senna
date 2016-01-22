@@ -96,3 +96,13 @@ void sennaParseSentence(SENNA *senna, const char *sentence, unsigned int options
  */
 unsigned int sennaGetNumberOfWords(const SENNA *senna);
 
+/*
+ * returns the offset of the start of the word
+ */
+unsigned int sennaGetStartOffset(const SENNA *senna, unsigned int token);
+
+/*
+ * returns the offset of the end of the word
+ */
+unsigned int sennaGetEndOffset(const SENNA *senna, unsigned int token);
+
