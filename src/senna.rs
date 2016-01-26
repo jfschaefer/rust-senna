@@ -11,6 +11,7 @@ use sentence::{Sentence, Word};
 
 
 /// Specifies which information shall be generated when parsing a sentence
+#[derive(PartialEq, Clone, Copy)]
 pub enum ParseOption {
     TokenizeOnly,
     GeneratePOS,
@@ -65,7 +66,12 @@ impl <'a> Senna {
         for i in 0..n {
             let start = unsafe { sennaGetStartOffset(self.senna_ptr, i) } as usize;
             let end = unsafe { sennaGetEndOffset(self.senna_ptr, i) } as usize;
-            words.push(Word::new(start, end, &sentence[start..end]));
+            let mut word = Word::new(start, end, &sentence[start..end]);
+            if options == ParseOption::GeneratePOS || options == ParseOption::GeneratePSG {
+                let pos = unsafe { sennaGetPOS(self.senna_ptr, i) };
+                word.set_pos(const_cptr_to_rust(pos));
+            }
+            words.push(word);
         }
 
         Sentence::new(sentence, words)

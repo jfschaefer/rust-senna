@@ -10,6 +10,10 @@
         "rust-senna: Fatal: Tokenization results accessed before generation\n");    \
      exit(EXIT_FAILURE); }  }
 
+#define POS_DEF_CHECK() { if (!senna->lastSentence.pos_labels) { fprintf(stderr,        \
+        "rust-senna: Fatal: POS labels accessed, but not generated\n");    \
+     exit(EXIT_FAILURE); }  }
+
 /*
  * allocates hash tables labels and provides a pointer to the data structure
  * has to be freed using freeSenna
@@ -107,9 +111,11 @@ void sennaParseSentence(SENNA *senna, const char *sentence, unsigned int options
     SENNA_Tokens *tokens = SENNA_Tokenizer_tokenize(senna->tokenizer, sentence);
     senna->lastSentence.tokens = tokens;
     assert(tokens);
+    fprintf(stderr, "Tokenization\n");
 
     // Pos
-    if (options & GENERATE_POS || options & GENERATE_PSG) {
+    if (options == GENERATE_POS || options == GENERATE_PSG) {
+        fprintf(stderr, "POS generation\n");
         senna->lastSentence.pos_labels = SENNA_POS_forward(
                 senna->pos, tokens->word_idx, tokens->caps_idx, tokens->suff_idx, tokens->n);
     } else {
@@ -117,7 +123,7 @@ void sennaParseSentence(SENNA *senna, const char *sentence, unsigned int options
     }
 
     // Psg
-    if (options & GENERATE_PSG) {
+    if (options == GENERATE_PSG) {
         assert(senna->lastSentence.pos_labels);
         SENNA_PSG_forward(senna->psg, tokens->word_idx, tokens->caps_idx,
                 senna->lastSentence.pos_labels, tokens->n, &senna->lastSentence.psg_labels,
@@ -161,9 +167,17 @@ unsigned int sennaGetStartOffset(const SENNA* senna, unsigned int token) {
     return senna->lastSentence.tokens->start_offset[token];
 }
 
+
 unsigned int sennaGetEndOffset(const SENNA* senna, unsigned int token) {
     TOKEN_DEF_CHECK();
     return senna->lastSentence.tokens->end_offset[token];
+}
+
+
+const char * sennaGetPOS(const SENNA *senna, unsigned int token) {
+    TOKEN_DEF_CHECK();
+    POS_DEF_CHECK();
+    return SENNA_Hash_key(senna->pos_hash, senna->lastSentence.pos_labels[token]);
 }
 
 

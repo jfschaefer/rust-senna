@@ -106,3 +106,10 @@ unsigned int sennaGetStartOffset(const SENNA *senna, unsigned int token);
  */
 unsigned int sennaGetEndOffset(const SENNA *senna, unsigned int token);
 
+
+/*
+ * returns the POS tag of a word
+ */
+
+const char * sennaGetPOS(const SENNA *senna, unsigned int token);
+
