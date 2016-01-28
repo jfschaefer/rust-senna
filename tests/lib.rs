@@ -4,6 +4,7 @@
 extern crate rustsenna;
 
 use rustsenna::senna::*;
+use rustsenna::sentence::PSGNode;
 
 #[test]
 /// Tokenization returns correct number of words
@@ -30,5 +31,38 @@ fn test_pos_tagging() {
     let a = &sentence.get_words()[3];
     assert_eq!("a", a.get_string());
     assert_eq!("DT", a.get_pos());
+}
+
+#[test]
+/// test psg tags
+fn test_psg_tagging() {
+    let mut senna = Senna::new("senna/");
+    let sentence = senna.parse("it works", ParseOption::GeneratePSG);
+    // remark: psg should be (S(NP*)(VP*))
+    let root = sentence.get_psgroot().unwrap();
+    match root {
+        &PSGNode::Leaf(_) => { panic!("wrong psg node A") }
+        &PSGNode::Parent(ref s) => {
+            assert_eq!(s.get_label(), "S");
+            let children = s.get_children();
+            assert_eq!(children.len(), 2);
+            match children[0] {
+                PSGNode::Leaf(_) => { panic!("wrong psg node B") }
+                PSGNode::Parent(ref t) => { assert_eq!(t.get_label(), "NP") }
+            }
+            match children[1] {
+                PSGNode::Leaf(_) => { panic!("wrong psg node C") }
+                PSGNode::Parent(ref t) => {
+                    assert_eq!(t.get_label(), "VP");
+                    assert_eq!(t.get_children().len(), 1);
+                    match t.get_children()[0] {
+                        PSGNode::Leaf(1) => { } /* Correct :-) */,
+                        PSGNode::Leaf(_) => { panic!("wrong psg node D") },
+                        _ => { panic!("wrong psg node D") }
+                    }
+                }
+            }
+        }
+    }
 }
 

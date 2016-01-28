@@ -13,4 +13,6 @@ extern "C" {
     pub fn sennaGetStartOffset(senna: *const c_void, token: c_uint) -> c_uint;
     pub fn sennaGetEndOffset(senna: *const c_void, token: c_uint) -> c_uint;
     pub fn sennaGetPOS(senna: *const c_void, token: c_uint) -> *const c_char;
+    pub fn sennaGetPSGStr(senna: *mut c_void) -> *const c_char;
 }
+

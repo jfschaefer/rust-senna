@@ -61,20 +61,25 @@ impl <'a> Senna {
     pub fn parse(&mut self, sentence: &'a str, options: ParseOption) -> Sentence<'a> {
         senna_parse(self, sentence, options);
         let n = unsafe { sennaGetNumberOfWords(self.senna_ptr) };
-        let mut words: Vec<Word> = Vec::with_capacity(n as usize);
+        let mut sen = Sentence::new(sentence);
 
         for i in 0..n {
             let start = unsafe { sennaGetStartOffset(self.senna_ptr, i) } as usize;
             let end = unsafe { sennaGetEndOffset(self.senna_ptr, i) } as usize;
-            let mut word = Word::new(start, end, &sentence[start..end]);
+            let mut word = Word::new(start, end, &sentence[start..end], i);
             if options == ParseOption::GeneratePOS || options == ParseOption::GeneratePSG {
                 let pos = unsafe { sennaGetPOS(self.senna_ptr, i) };
                 word.set_pos(const_cptr_to_rust(pos));
             }
-            words.push(word);
+            sen.push_word(word);
         }
 
-        Sentence::new(sentence, words)
+        if options == ParseOption::GeneratePSG {
+            let psgstr = const_cptr_to_rust( unsafe { sennaGetPSGStr(self.senna_ptr) } );
+            let psgroot = parse_psg(psgstr.as_bytes(), &mut 0, &mut 0);
+            sen.set_psgroot(psgroot);
+        }
+        sen
     }
 }
 

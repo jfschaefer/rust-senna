@@ -7,11 +7,17 @@
 
 /* asserts that tokens have been generated */
 #define TOKEN_DEF_CHECK() { if (!senna->lastSentence.tokens) { fprintf(stderr,        \
-        "rust-senna: Fatal: Tokenization results accessed before generation\n");    \
+        "rust-senna: Fatal: Tokenization results accessed before generation\n");      \
      exit(EXIT_FAILURE); }  }
 
+/* asserts that pos labels have been generated */
 #define POS_DEF_CHECK() { if (!senna->lastSentence.pos_labels) { fprintf(stderr,        \
-        "rust-senna: Fatal: POS labels accessed, but not generated\n");    \
+        "rust-senna: Fatal: POS labels accessed, but not generated\n");                 \
+     exit(EXIT_FAILURE); }  }
+
+/* asserts that psg labels have been generated */
+#define PSG_DEF_CHECK() { if (!senna->lastSentence.psg_labels) { fprintf(stderr,        \
+        "rust-senna: Fatal: PSG labels accessed, but not generated\n");                 \
      exit(EXIT_FAILURE); }  }
 
 /*
@@ -20,10 +26,7 @@
  */
 SENNA* sennaCreate(const char * opt_path) {
     SENNA* senna = (SENNA*) malloc(sizeof(SENNA));
-    if (!senna) {
-        fprintf(stderr, "rust-senna: Fatal: Malloc failed\n");
-        exit(EXIT_FAILURE);
-    }
+    CHECK_ALLOC(senna);
 
     senna->word_hash = SENNA_Hash_new(opt_path, "hash/words.lst");
     senna->caps_hash = SENNA_Hash_new(opt_path, "hash/caps.lst");
@@ -68,6 +71,10 @@ SENNA* sennaCreate(const char * opt_path) {
     senna->lastSentence.pos_labels = NULL;
     senna->lastSentence.psg_labels = NULL;
 
+    senna->strbuf.ptr = (char *) malloc(sizeof(char) * 512);
+    CHECK_ALLOC(senna->strbuf.ptr);
+    senna->strbuf.length = 512;
+    senna->strbuf.pos = 0;
 
     return senna;
 }
@@ -101,6 +108,8 @@ void sennaFree(SENNA *senna) {
     SENNA_PSG_free(senna->psg);
 
     SENNA_Tokenizer_free(senna->tokenizer);
+
+    free(senna->strbuf.ptr);
 
     free(senna);
 }
@@ -180,4 +189,45 @@ const char * sennaGetPOS(const SENNA *senna, unsigned int token) {
     return SENNA_Hash_key(senna->pos_hash, senna->lastSentence.pos_labels[token]);
 }
 
+
+#define BUFSIZER() if (senna->strbuf.pos == senna->strbuf.length) {           \
+    senna->strbuf.length *= 2;                                                \
+    senna->strbuf.ptr = (char *) malloc(senna->strbuf.length * sizeof(char)); \
+    CHECK_ALLOC(senna->strbuf.ptr);                                           \
+  }
+
+#define BUFPRINT(str) {                      \
+    const char *tmp = str;                   \
+    while (*tmp) {                           \
+        senna->strbuf.ptr[senna->strbuf.pos++]  = *tmp++;    \
+        BUFSIZER()                           \
+    } }
+
+
+const char * sennaGetPSGStr(SENNA *senna) {
+    TOKEN_DEF_CHECK();
+    POS_DEF_CHECK();
+    PSG_DEF_CHECK();
+    int i, j;
+    if (!senna->lastSentence.is_psg_one_segment) {
+        BUFPRINT("(S");
+    }
+
+    struct ParsedSentence sentence = senna->lastSentence;
+    for (i = 0; i < sentence.tokens->n; i++) {
+        for (j = sentence.n_psg_level - 1; j >= 0; j--) {
+            BUFPRINT(SENNA_Hash_key(senna->psg_left_hash, sentence.psg_labels[j*sentence.tokens->n+i]));
+        }
+        BUFPRINT("*");
+        for (j = 0; j < sentence.n_psg_level; j++) {
+            BUFPRINT(SENNA_Hash_key(senna->psg_right_hash, sentence.psg_labels[j*sentence.tokens->n+i]));
+        }
+    }
+
+    if (!senna->lastSentence.is_psg_one_segment) {
+        BUFPRINT(")");
+    }
+
+    return senna->strbuf.ptr;
+}
 
