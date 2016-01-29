@@ -5,11 +5,12 @@ extern crate rustsenna;
 
 use rustsenna::senna::*;
 use rustsenna::sentence::PSGNode;
+use rustsenna::sennapath::*;
 
 #[test]
 /// Tokenization returns correct number of words
 fn test_token_count() {
-    let mut senna = Senna::new("senna/");
+    let mut senna = Senna::new(SENNA_PATH);
     assert_eq!(2, senna.get_number_of_words("Hello world"));
 }
 
@@ -17,7 +18,7 @@ fn test_token_count() {
 #[test]
 /// Test words in tokenization are okay
 fn test_word_strings_in_tokenization() {
-    let mut senna = Senna::new("senna/");
+    let mut senna = Senna::new(SENNA_PATH);
     let sentence = senna.parse("How are you", ParseOption::TokenizeOnly);
     assert_eq!("are", sentence.get_words()[1].get_string());
 }
@@ -26,7 +27,7 @@ fn test_word_strings_in_tokenization() {
 #[test]
 /// test pos tags
 fn test_pos_tagging() {
-    let mut senna = Senna::new("senna/");
+    let mut senna = Senna::new(SENNA_PATH);
     let sentence = senna.parse("This is not a sentence", ParseOption::GeneratePOS);
     let a = &sentence.get_words()[3];
     assert_eq!("a", a.get_string());
@@ -36,7 +37,7 @@ fn test_pos_tagging() {
 #[test]
 /// test psg tags
 fn test_psg_tagging() {
-    let mut senna = Senna::new("senna/");
+    let mut senna = Senna::new(SENNA_PATH);
     let sentence = senna.parse("it works", ParseOption::GeneratePSG);
     // remark: psg should be (S(NP*)(VP*))
     let root = sentence.get_psgroot().unwrap();
