@@ -58,6 +58,7 @@ impl <'a> Senna {
     }
 
 
+    /// Parses a sentence and returns the results as a `Sentence` structure.
     pub fn parse(&mut self, sentence: &'a str, options: ParseOption) -> Sentence<'a> {
         senna_parse(self, sentence, options);
         let n = unsafe { sennaGetNumberOfWords(self.senna_ptr) };
@@ -85,6 +86,7 @@ impl <'a> Senna {
 
 
 impl Drop for Senna {
+    /// Senna's hash tables etc. must be freed
     fn drop(&mut self) {
         unsafe { sennaFree(self.senna_ptr); }
     }
