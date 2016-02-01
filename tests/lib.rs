@@ -6,6 +6,7 @@ extern crate rustsenna;
 use rustsenna::senna::*;
 use rustsenna::sentence::PSGNode;
 use rustsenna::sennapath::*;
+use rustsenna::pos::POS;
 
 #[test]
 /// Tokenization returns correct number of words
@@ -31,7 +32,7 @@ fn test_pos_tagging() {
     let sentence = senna.parse("This is not a sentence", ParseOption::GeneratePOS);
     let a = &sentence.get_words()[3];
     assert_eq!("a", a.get_string());
-    assert_eq!("DT", a.get_pos());
+    assert_eq!(POS::DT, a.get_pos());
 }
 
 #[test]
