@@ -102,6 +102,7 @@ impl<'t> Sentence<'t> {
 }
 
 /// A phrase node in the PSG tree
+#[derive(Clone)]
 pub struct PSGPhrase {
     label: Phrase,
     children: Vec<PSGNode>,
@@ -135,6 +136,7 @@ impl PSGPhrase {
         
 
 /// A node in the PSG tree (which can be either a leaf, referring to a word, or a phrase)
+#[derive(Clone)]
 pub enum PSGNode {
     Leaf(usize /* <- index of word */),
     Parent(Box<PSGPhrase>),
