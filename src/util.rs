@@ -2,10 +2,12 @@
 
 use std::ffi::{CString, CStr};
 use std::str;
+use std::collections::HashMap;
 
 use senna::{Senna, ParseOption};
 use sentence::*;
 use c_signatures::*;
+use phrase::Phrase;
 
 /// Parses one sentence
 pub fn senna_parse(senna: &mut Senna, sentence: &str, option: ParseOption) {
@@ -22,7 +24,8 @@ pub fn const_cptr_to_rust<'t>(cptr: *const i8) -> &'t str {
 }
 
 /// recursively parses a PSG string and returns the root node
-pub fn parse_psg(psgstr: &[u8], word_count: &mut usize, index: &mut usize) -> PSGNode {
+pub fn parse_psg(psgstr: &[u8], word_count: &mut usize, index: &mut usize,
+                 psg_map: &HashMap<&str, Phrase>) -> PSGNode {
     if *index >= psgstr.len() {
         panic!("rust-senna: Fatal: PSG string ended unexpectedly: \"{}\"",
                 String::from_utf8(psgstr.to_vec()).unwrap());
@@ -46,10 +49,10 @@ pub fn parse_psg(psgstr: &[u8], word_count: &mut usize, index: &mut usize) -> PS
             let label = str::from_utf8(&psgstr[*index..(*index + offset)]).unwrap();
             print!("Found \"{}\"\n", label);
             *index = *index + offset;
-            let mut phrase = Box::new(PSGPhrase::new(label));
+            let mut phrase = Box::new(PSGPhrase::new(*psg_map.get(&label).unwrap()));
             print!("pos 2: {}\n", *index);
             while psgstr[*index] != b')' {
-                (*phrase).push_child(parse_psg(psgstr, word_count, index));
+                (*phrase).push_child(parse_psg(psgstr, word_count, index, psg_map));
                 print!("pos 3: {}\n", *index);
             }
             *index = *index + 1;

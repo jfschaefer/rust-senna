@@ -4,6 +4,7 @@
 /// A tokenized and possibly annotated word
 
 use pos::POS;
+use phrase::Phrase;
 
 pub struct Word<'t> {
     offset_start : usize,
@@ -102,22 +103,22 @@ impl<'t> Sentence<'t> {
 
 /// A phrase node in the PSG tree
 pub struct PSGPhrase {
-    label: String,
+    label: Phrase,
     children: Vec<PSGNode>,
 }
 
 impl PSGPhrase {
     /// constructs a new PSG phrase with a label (e.g. `NP` or `VP`)
-    pub fn new(label: &str) -> PSGPhrase {
+    pub fn new(label: Phrase) -> PSGPhrase {
         PSGPhrase {
-            label: label.to_string(),
+            label: label,
             children: vec![],
         }
     }
 
     /// returns the label
-    pub fn get_label(&self) -> &str {
-        &self.label
+    pub fn get_label(&self) -> Phrase {
+        self.label
     }
 
     /// adds another child node

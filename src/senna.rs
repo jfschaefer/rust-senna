@@ -9,6 +9,7 @@ use c_signatures::*;
 use util::*;   // helper functionality
 use sentence::{Sentence, Word};
 use pos::POS;
+use phrase::Phrase;
 
 
 
@@ -42,6 +43,9 @@ pub struct Senna<'s> {
     /// HashMap for converting string pos tags to `pos::POS`
     /// (unfortunately, there seem to be no static HashMaps in Rust yet)
     pub pos_map : HashMap<&'s str, POS>,
+    /// HashMap for converting string psg tags to `phrase::Phrase`
+    /// (unfortunately, there seem to be no static HashMaps in Rust yet)
+    pub psg_map : HashMap<&'s str, Phrase>,
 }
 
 impl <'a, 's> Senna<'s> {
@@ -52,6 +56,7 @@ impl <'a, 's> Senna<'s> {
             Senna {
                 senna_ptr : sennaCreate(c_path),
                 pos_map : POS::generate_str_to_pos_map(),
+                psg_map : Phrase::generate_str_to_phrase_map(),
             }
         }
     }
@@ -93,7 +98,7 @@ impl <'a, 's> Senna<'s> {
 
         if options == ParseOption::GeneratePSG {
             let psgstr = const_cptr_to_rust( unsafe { sennaGetPSGStr(self.senna_ptr) } );
-            let psgroot = parse_psg(psgstr.as_bytes(), &mut 0, &mut 0);
+            let psgroot = parse_psg(psgstr.as_bytes(), &mut 0, &mut 0, &self.psg_map);
             sen.set_psgroot(psgroot);
         }
         sen

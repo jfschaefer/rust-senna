@@ -7,6 +7,7 @@ use rustsenna::senna::*;
 use rustsenna::sentence::PSGNode;
 use rustsenna::sennapath::*;
 use rustsenna::pos::POS;
+use rustsenna::phrase::Phrase;
 
 #[test]
 /// Tokenization returns correct number of words
@@ -45,17 +46,17 @@ fn test_psg_tagging() {
     match root {
         &PSGNode::Leaf(_) => { panic!("wrong psg node A") }
         &PSGNode::Parent(ref s) => {
-            assert_eq!(s.get_label(), "S");
+            assert_eq!(s.get_label(), Phrase::S);
             let children = s.get_children();
             assert_eq!(children.len(), 2);
             match children[0] {
                 PSGNode::Leaf(_) => { panic!("wrong psg node B") }
-                PSGNode::Parent(ref t) => { assert_eq!(t.get_label(), "NP") }
+                PSGNode::Parent(ref t) => { assert_eq!(t.get_label(), Phrase::NP) }
             }
             match children[1] {
                 PSGNode::Leaf(_) => { panic!("wrong psg node C") }
                 PSGNode::Parent(ref t) => {
-                    assert_eq!(t.get_label(), "VP");
+                    assert_eq!(t.get_label(), Phrase::VP);
                     assert_eq!(t.get_children().len(), 1);
                     match t.get_children()[0] {
                         PSGNode::Leaf(1) => { } /* Correct :-) */,

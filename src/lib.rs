@@ -11,4 +11,5 @@ pub mod senna;
 pub mod sentence;
 pub mod sennapath;
 pub mod pos;
+pub mod phrase;
 
