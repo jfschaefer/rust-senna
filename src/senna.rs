@@ -46,7 +46,7 @@ pub struct Senna<'s> {
 
 impl <'a, 's> Senna<'s> {
     /// Initializes senna based on the data files in `opt_path`
-    pub fn new(opt_path : &str) -> Senna {
+    pub fn new(opt_path : String) -> Senna<'s> {
         let c_path = CString::new(opt_path).unwrap().as_ptr();
         unsafe {
             Senna {
