@@ -1,12 +1,14 @@
 //! The initialization functionality
 
-use c_signatures::*;
-
 use libc::c_void;
 use std::ffi::CString;
+use std::collections::HashMap;
+use std::io::{self, Write};
 
+use c_signatures::*;
 use util::*;   // helper functionality
 use sentence::{Sentence, Word};
+use pos::POS;
 
 
 
@@ -34,18 +36,22 @@ impl ParseOption {
 
 
 /// Handle to all the hashes etc.
-pub struct Senna {
-    /// pointer to the corresponding c struct
+pub struct Senna<'s> {
+    /// pointer to the corresponding C struct
     pub senna_ptr : *mut c_void,
+    /// HashMap for converting string pos tags to `pos::POS`
+    /// (unfortunately, there seem to be no static HashMaps in Rust yet)
+    pub pos_map : HashMap<&'s str, POS>,
 }
 
-impl <'a> Senna {
+impl <'a, 's> Senna<'s> {
     /// Initializes senna based on the data files in `opt_path`
     pub fn new(opt_path : &str) -> Senna {
         let c_path = CString::new(opt_path).unwrap().as_ptr();
         unsafe {
             Senna {
                 senna_ptr : sennaCreate(c_path),
+                pos_map : POS::generate_str_to_pos_map(),
             }
         }
     }
@@ -70,7 +76,17 @@ impl <'a> Senna {
             let mut word = Word::new(start, end, &sentence[start..end], i);
             if options == ParseOption::GeneratePOS || options == ParseOption::GeneratePSG {
                 let pos = unsafe { sennaGetPOS(self.senna_ptr, i) };
-                word.set_pos(const_cptr_to_rust(pos));
+                let pospos = match self.pos_map.get(const_cptr_to_rust(pos)) {
+                    None => {
+                        writeln!(&mut io::stderr(),
+                            "Warning: rust-senna: senna: unknown POS tag: \"{}\"",
+                            const_cptr_to_rust(pos)).unwrap();
+                        POS::NOT_SET
+                    },
+                    Some(x) => *x,
+                };
+
+                word.set_pos(pospos);
             }
             sen.push_word(word);
         }
@@ -85,7 +101,7 @@ impl <'a> Senna {
 }
 
 
-impl Drop for Senna {
+impl<'s> Drop for Senna<'s> {
     /// Senna's hash tables etc. must be freed
     fn drop(&mut self) {
         unsafe { sennaFree(self.senna_ptr); }

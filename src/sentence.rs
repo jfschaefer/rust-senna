@@ -2,11 +2,14 @@
 //! which can be tokenized, POS tagged, etc.
 
 /// A tokenized and possibly annotated word
+
+use pos::POS;
+
 pub struct Word<'t> {
     offset_start : usize,
     offset_end : usize,
     string: &'t str,
-    pos: String,
+    pos: POS,
     n: u32,    // nth word in sentence
 }
 
@@ -17,19 +20,19 @@ impl<'t> Word<'t> {
             offset_start: offset_start,
             offset_end: offset_end,
             string: string,
-            pos: String::new(),
+            pos: POS::NOT_SET,
             n: n,
         }
     }
 
     /// Sets the POS tag
-    pub fn set_pos(&mut self, tag: &str) {
-        self.pos = tag.to_string();
+    pub fn set_pos(&mut self, tag: POS) {
+        self.pos = tag;
     }
 
     /// returns the POS tag (empty string if not set)
-    pub fn get_pos(&self) -> &str {
-        &self.pos
+    pub fn get_pos(&self) -> POS {
+        self.pos
     }
 
     /// Returns the string representation of the word

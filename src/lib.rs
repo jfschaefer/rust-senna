@@ -10,4 +10,5 @@ mod util;
 pub mod senna;
 pub mod sentence;
 pub mod sennapath;
+pub mod pos;
 
