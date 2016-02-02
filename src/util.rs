@@ -30,7 +30,6 @@ pub fn parse_psg(psgstr: &[u8], word_count: &mut usize, index: &mut usize,
         panic!("rust-senna: Fatal: PSG string ended unexpectedly: \"{}\"",
                 String::from_utf8(psgstr.to_vec()).unwrap());
     }
-    print!("called on {}\n", *index);
     match psgstr[*index] {
         b'*' => {
             let node = PSGNode::Leaf(*word_count);
@@ -47,13 +46,10 @@ pub fn parse_psg(psgstr: &[u8], word_count: &mut usize, index: &mut usize,
                 offset += 1;
             }
             let label = str::from_utf8(&psgstr[*index..(*index + offset)]).unwrap();
-            print!("Found \"{}\"\n", label);
             *index = *index + offset;
             let mut phrase = Box::new(PSGPhrase::new(*psg_map.get(&label).unwrap()));
-            print!("pos 2: {}\n", *index);
             while psgstr[*index] != b')' {
                 (*phrase).push_child(parse_psg(psgstr, word_count, index, psg_map));
-                print!("pos 3: {}\n", *index);
             }
             *index = *index + 1;
             return PSGNode::Parent(phrase);

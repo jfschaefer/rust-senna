@@ -120,11 +120,9 @@ void sennaParseSentence(SENNA *senna, const char *sentence, unsigned int options
     SENNA_Tokens *tokens = SENNA_Tokenizer_tokenize(senna->tokenizer, sentence);
     senna->lastSentence.tokens = tokens;
     assert(tokens);
-    fprintf(stderr, "Tokenization\n");
 
     // Pos
     if (options == GENERATE_POS || options == GENERATE_PSG) {
-        fprintf(stderr, "POS generation\n");
         senna->lastSentence.pos_labels = SENNA_POS_forward(
                 senna->pos, tokens->word_idx, tokens->caps_idx, tokens->suff_idx, tokens->n);
     } else {
