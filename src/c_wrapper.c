@@ -228,6 +228,8 @@ const char * sennaGetPSGStr(SENNA *senna) {
         BUFPRINT(")");
     }
 
+    senna->strbuf.ptr[senna->strbuf.pos] = '\0';
+
     return senna->strbuf.ptr;
 }
 
