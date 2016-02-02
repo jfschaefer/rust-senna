@@ -206,6 +206,7 @@ const char * sennaGetPSGStr(SENNA *senna) {
     TOKEN_DEF_CHECK();
     POS_DEF_CHECK();
     PSG_DEF_CHECK();
+    senna->strbuf.pos = 0;
     int i, j;
     if (!senna->lastSentence.is_psg_one_segment) {
         BUFPRINT("(S");
