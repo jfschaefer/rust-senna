@@ -1,5 +1,5 @@
 CC=gcc
-FLAGS=-Wall -fPIC -c -g
+FLAGS=-Wall -fPIC -c -g -O3
 OUT_DIR?=out
 SENNA_DIR?=senna
 
