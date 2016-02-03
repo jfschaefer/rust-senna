@@ -34,7 +34,7 @@ pub enum Phrase {
 }
 
 impl Phrase {
-    pub fn to_string(&self) -> &'static str {
+    pub fn to_str(&self) -> &'static str {
         match self {
             &Phrase::ADJP => "ADJP",
             &Phrase::ADVP => "ADVP",

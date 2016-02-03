@@ -109,6 +109,19 @@ pub struct PSGPhrase {
 }
 
 impl PSGPhrase {
+    pub fn generate_string(&self) -> String {
+        let mut string = String::new();
+        string.push('(');
+        string.push_str(self.label.to_str());
+        for e in &self.children {
+            string.push_str(&e.generate_string());
+        }
+        string.push(')');
+        return string;
+    }
+}
+
+impl PSGPhrase {
     /// constructs a new PSG phrase with a label (e.g. `NP` or `VP`)
     pub fn new(label: Phrase) -> PSGPhrase {
         PSGPhrase {
@@ -142,4 +155,12 @@ pub enum PSGNode {
     Parent(Box<PSGPhrase>),
 }
 
+impl PSGNode {
+    pub fn generate_string(&self) -> String {
+        match self {
+            &PSGNode::Leaf(_) => "*".to_owned(),
+            &PSGNode::Parent(ref x) => x.generate_string(),
+        }
+    }
+}
 
