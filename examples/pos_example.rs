@@ -4,11 +4,11 @@
 extern crate rustsenna;
 
 use rustsenna::sennapath::SENNA_PATH;
-use rustsenna::senna::{Senna, ParseOption};
+use rustsenna::senna::{Senna, SennaParseOptions};
 
 fn main() {
     let mut senna = Senna::new(SENNA_PATH.to_owned());
-    let sentence = senna.parse("This is not a sentence.", ParseOption::GeneratePOS);
+    let sentence = senna.parse("This is not a sentence.", SennaParseOptions { pos: true, psg: false, });
     for word in sentence.get_words() {
         print!("\"{}\" - {}\n", word.get_string(), word.get_pos().to_str());
     }

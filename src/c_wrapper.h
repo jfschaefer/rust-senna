@@ -19,9 +19,9 @@
  * For the processing argument we need to specify what we want to generate.
  * We'll use bit patterns for that.
  */
-#define TOKENIZE_ONLY 0  /* We have to do this step in any case */
-#define GENERATE_POS  1  /* Part-of-speech (required for psg) */
-#define GENERATE_PSG  2  /* phrase structure */
+#define TOKENIZE      0<<0  /* We have to do this step in any case */
+#define GENERATE_POS  1<<0  /* Part-of-speech (required for psg) */
+#define GENERATE_PSG  1<<1  /* phrase structure */
 
 
 /*

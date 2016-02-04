@@ -21,7 +21,7 @@ fn test_token_count() {
 /// Test words in tokenization are okay
 fn test_word_strings_in_tokenization() {
     let mut senna = Senna::new(SENNA_PATH.to_owned());
-    let sentence = senna.parse("How are you", ParseOption::TokenizeOnly);
+    let sentence = senna.parse("How are you", SennaParseOptions { pos: false, psg: false, });
     assert_eq!("are", sentence.get_words()[1].get_string());
 }
 
@@ -30,7 +30,7 @@ fn test_word_strings_in_tokenization() {
 /// test pos tags
 fn test_pos_tagging() {
     let mut senna = Senna::new(SENNA_PATH.to_owned());
-    let sentence = senna.parse("This is not a sentence", ParseOption::GeneratePOS);
+    let sentence = senna.parse("This is not a sentence", SennaParseOptions { pos: true, psg: false, });
     let a = &sentence.get_words()[3];
     assert_eq!("a", a.get_string());
     assert_eq!(POS::DT, a.get_pos());
@@ -40,7 +40,7 @@ fn test_pos_tagging() {
 /// test psg tags
 fn test_psg_tagging() {
     let mut senna = Senna::new(SENNA_PATH.to_owned());
-    let sentence = senna.parse("it works", ParseOption::GeneratePSG);
+    let sentence = senna.parse("it works", SennaParseOptions { pos: true, psg: true, });
     // remark: psg should be (S(NP*)(VP*))
     let root = sentence.get_psgroot().unwrap();
     match root {

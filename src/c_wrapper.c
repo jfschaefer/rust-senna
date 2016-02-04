@@ -122,7 +122,7 @@ void sennaParseSentence(SENNA *senna, const char *sentence, unsigned int options
     assert(tokens);
 
     // Pos
-    if (options == GENERATE_POS || options == GENERATE_PSG) {
+    if (options&GENERATE_POS || options&GENERATE_PSG) {
         senna->lastSentence.pos_labels = SENNA_POS_forward(
                 senna->pos, tokens->word_idx, tokens->caps_idx, tokens->suff_idx, tokens->n);
     } else {
@@ -130,7 +130,7 @@ void sennaParseSentence(SENNA *senna, const char *sentence, unsigned int options
     }
 
     // Psg
-    if (options == GENERATE_PSG) {
+    if (options&GENERATE_PSG) {
         assert(senna->lastSentence.pos_labels);
         SENNA_PSG_forward(senna->psg, tokens->word_idx, tokens->caps_idx,
                 senna->lastSentence.pos_labels, tokens->n, &senna->lastSentence.psg_labels,

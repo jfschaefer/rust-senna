@@ -4,13 +4,13 @@ use std::ffi::{CString, CStr};
 use std::str;
 use std::collections::HashMap;
 
-use senna::{Senna, ParseOption};
+use senna::{Senna, SennaParseOptions};
 use sentence::*;
 use c_signatures::*;
 use phrase::Phrase;
 
 /// Parses one sentence
-pub fn senna_parse(senna: &mut Senna, sentence: &str, option: ParseOption) {
+pub fn senna_parse(senna: &mut Senna, sentence: &str, option: SennaParseOptions) {
     let c_string = CString::new(sentence).unwrap().as_ptr();
     unsafe {
         sennaParseSentence(senna.senna_ptr, c_string, option.convert());

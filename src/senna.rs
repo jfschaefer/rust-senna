@@ -12,25 +12,46 @@ use pos::POS;
 use phrase::Phrase;
 
 
-
-/// Specifies which information shall be generated when parsing a sentence
 #[derive(PartialEq, Clone, Copy)]
-pub enum ParseOption {
-    TokenizeOnly,
-    GeneratePOS,
-    GeneratePSG,      // includes POS generation
+pub struct SennaParseOptions {
+    pub pos: bool,
+    pub psg: bool,
 }
 
-impl ParseOption {
-    /// Convert to the corresponding values in `c_wrapper.h`
-    pub fn convert(&self) -> u32 {
-        match *self {
-            ParseOption::TokenizeOnly => 0,
-            ParseOption::GeneratePOS  => 1,
-            ParseOption::GeneratePSG  => 2,
+impl Default for SennaParseOptions {
+    fn default() -> SennaParseOptions {
+        SennaParseOptions {
+            pos: true,
+            psg: false,   // expensive
         }
     }
 }
+
+impl SennaParseOptions {
+    pub fn convert(&self) -> u32 {
+        0 + if self.pos { 1<<0 } else { 0 } + if self.psg { 1<<1 } else { 0 }
+    }
+}
+
+
+// /// Specifies which information shall be generated when parsing a sentence
+// #[derive(PartialEq, Clone, Copy)]
+// pub enum ParseOption {
+//     Tokenize,
+//     GeneratePOS,
+//     GeneratePSG,      // includes POS generation
+// }
+// 
+// impl ParseOption {
+//     /// Convert to the corresponding values in `c_wrapper.h`
+//     pub fn convert(&self) -> u32 {
+//         match *self {
+//             ParseOption::Tokenize     => 0,
+//             ParseOption::GeneratePOS  => 1<<0,
+//             ParseOption::GeneratePSG  => 1<<1,
+//         }
+//     }
+// }
 
 
 
@@ -64,13 +85,14 @@ impl <'a, 's> Senna<'s> {
     /// Returns the number of words contained in a string
     /// (warning: Does full tokenization, i.e. relatively costly)
     pub fn get_number_of_words(&mut self, sentence: &str) -> u32 {
-        senna_parse(self, sentence, ParseOption::TokenizeOnly);
+        senna_parse(self, sentence, SennaParseOptions {
+            pos: false, psg: false, });
         unsafe { sennaGetNumberOfWords(self.senna_ptr) }
     }
 
 
     /// Parses a sentence and returns the results as a `Sentence` structure.
-    pub fn parse(&mut self, sentence: &'a str, options: ParseOption) -> Sentence<'a> {
+    pub fn parse(&mut self, sentence: &'a str, options: SennaParseOptions) -> Sentence<'a> {
         senna_parse(self, sentence, options);
         let n = unsafe { sennaGetNumberOfWords(self.senna_ptr) };
         let mut sen = Sentence::new(sentence);
@@ -79,7 +101,7 @@ impl <'a, 's> Senna<'s> {
             let start = unsafe { sennaGetStartOffset(self.senna_ptr, i) } as usize;
             let end = unsafe { sennaGetEndOffset(self.senna_ptr, i) } as usize;
             let mut word = Word::new(start, end, &sentence[start..end], i);
-            if options == ParseOption::GeneratePOS || options == ParseOption::GeneratePSG {
+            if options.pos || options.psg {
                 let pos = unsafe { sennaGetPOS(self.senna_ptr, i) };
                 let pospos = match self.pos_map.get(const_cptr_to_rust(pos)) {
                     None => {
@@ -96,7 +118,7 @@ impl <'a, 's> Senna<'s> {
             sen.push_word(word);
         }
 
-        if options == ParseOption::GeneratePSG {
+        if options.psg {
             let psgstr = const_cptr_to_rust( unsafe { sennaGetPSGStr(self.senna_ptr) } );
             let psgroot = parse_psg(psgstr.as_bytes(), &mut 0, &mut 0, &self.psg_map);
             sen.set_psgroot(psgroot);
