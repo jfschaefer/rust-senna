@@ -58,20 +58,20 @@ impl SennaParseOptions {
 
 
 /// Handle to all the hashes etc.
-pub struct Senna<'s> {
+pub struct Senna {
     /// pointer to the corresponding C struct
     pub senna_ptr : *mut c_void,
     /// HashMap for converting string pos tags to `pos::POS`
     /// (unfortunately, there seem to be no static HashMaps in Rust yet)
-    pub pos_map : HashMap<&'s str, POS>,
+    pub pos_map : HashMap<&'static str, POS>,
     /// HashMap for converting string psg tags to `phrase::Phrase`
     /// (unfortunately, there seem to be no static HashMaps in Rust yet)
-    pub psg_map : HashMap<&'s str, Phrase>,
+    pub psg_map : HashMap<&'static str, Phrase>,
 }
 
-impl <'a, 's> Senna<'s> {
+impl <'a> Senna {
     /// Initializes senna based on the data files in `opt_path`
-    pub fn new(opt_path : String) -> Senna<'s> {
+    pub fn new(opt_path : String) -> Senna {
         let c_path = CString::new(opt_path).unwrap().as_ptr();
         unsafe {
             Senna {
@@ -128,7 +128,7 @@ impl <'a, 's> Senna<'s> {
 }
 
 
-impl<'s> Drop for Senna<'s> {
+impl Drop for Senna {
     /// Senna's hash tables etc. must be freed
     fn drop(&mut self) {
         unsafe { sennaFree(self.senna_ptr); }
