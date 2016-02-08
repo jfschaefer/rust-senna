@@ -1,13 +1,13 @@
 //! A few random tests.
 //! Knowing myself, the coverage will be insignificant ;)
 
-extern crate rustsenna;
+extern crate senna;
 
-use rustsenna::senna::*;
-use rustsenna::sentence::PSGNode;
-use rustsenna::sennapath::*;
-use rustsenna::pos::POS;
-use rustsenna::phrase::Phrase;
+use senna::senna::*;
+use senna::sentence::PSGNode;
+use senna::sennapath::*;
+use senna::pos::POS;
+use senna::phrase::Phrase;
 
 #[test]
 /// Tokenization returns correct number of words

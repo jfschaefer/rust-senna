@@ -1,5 +1,5 @@
 [package]
-name = "rustsenna"
+name = "rust-senna"
 version = "0.0.1"
 authors = ["jfschaefer <j.schaefer@jacobs-university.de>"]
 build = "build.rs"
@@ -8,4 +8,4 @@ build = "build.rs"
 libc = "0.2.4"
 
 [lib]
-name="rustsenna"
+name="senna"

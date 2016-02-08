@@ -1,10 +1,10 @@
 //! A simple example how you can use `rustsenna` for
 //! part-of-speech tagging of sentences.
 
-extern crate rustsenna;
+extern crate senna;
 
-use rustsenna::sennapath::SENNA_PATH;
-use rustsenna::senna::{Senna, SennaParseOptions};
+use senna::sennapath::SENNA_PATH;
+use senna::senna::{Senna, SennaParseOptions};
 
 fn main() {
     let mut senna = Senna::new(SENNA_PATH.to_owned());
