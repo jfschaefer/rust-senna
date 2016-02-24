@@ -11,9 +11,9 @@ use phrase::Phrase;
 
 /// Parses one sentence
 pub fn senna_parse(senna: &mut Senna, sentence: &str, option: SennaParseOptions) {
-    let c_string = CString::new(sentence).unwrap().as_ptr();
+    let c_string = CString::new(sentence).unwrap();
     unsafe {
-        sennaParseSentence(senna.senna_ptr, c_string, option.convert());
+        sennaParseSentence(senna.senna_ptr, c_string.as_ptr(), option.convert());
     }
 }
 
