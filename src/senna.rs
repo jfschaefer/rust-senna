@@ -121,6 +121,7 @@ impl <'a> Senna {
         if options.psg {
             let psgstr = const_cptr_to_rust( unsafe { sennaGetPSGStr(self.senna_ptr) } );
             let psgroot = parse_psg(psgstr.as_bytes(), &mut 0, &mut 0, &self.psg_map);
+            sen.set_psgstring(psgstr.to_string());
             sen.set_psgroot(psgroot);
         }
         sen

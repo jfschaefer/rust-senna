@@ -63,6 +63,7 @@ pub struct Sentence<'t> {
     string: &'t str,
     words: Vec<Word<'t>>,
     psgroot: Option<PSGNode>,
+    psgstring: Option<String>,
 }
 
 impl<'t> Sentence<'t> {
@@ -72,6 +73,7 @@ impl<'t> Sentence<'t> {
             string: string,
             words: vec![],
             psgroot: None,
+            psgstring: None,
         }
     }
 
@@ -88,6 +90,16 @@ impl<'t> Sentence<'t> {
     /// Returns the root of the PSG tree if set
     pub fn get_psgroot(&'t self) -> Option<&PSGNode> {
         self.psgroot.as_ref()
+    }
+
+    /// sets the PSG string representation (in case needed)
+    pub fn set_psgstring(&mut self, string: String) {
+        self.psgstring = Some(string);
+    }
+
+    /// gets the PSG string representation
+    pub fn get_psgstring(&mut self) -> Option<&String> {
+        self.psgstring.as_ref()
     }
 
     /// returns the tokenized words
