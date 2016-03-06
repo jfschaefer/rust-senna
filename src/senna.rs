@@ -41,7 +41,7 @@ impl SennaParseOptions {
 //     GeneratePOS,
 //     GeneratePSG,      // includes POS generation
 // }
-// 
+//
 // impl ParseOption {
 //     /// Convert to the corresponding values in `c_wrapper.h`
 //     pub fn convert(&self) -> u32 {
@@ -72,10 +72,10 @@ pub struct Senna {
 impl <'a> Senna {
     /// Initializes senna based on the data files in `opt_path`
     pub fn new(opt_path : String) -> Senna {
-        let c_path = CString::new(opt_path).unwrap().as_ptr();
+        let c_path = CString::new(opt_path).unwrap();
         unsafe {
             Senna {
-                senna_ptr : sennaCreate(c_path),
+                senna_ptr : sennaCreate(c_path.as_ptr()),
                 pos_map : POS::generate_str_to_pos_map(),
                 psg_map : Phrase::generate_str_to_phrase_map(),
             }
