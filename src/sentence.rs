@@ -98,7 +98,7 @@ impl<'t> Sentence<'t> {
     }
 
     /// gets the PSG string representation
-    pub fn get_psgstring(&mut self) -> Option<&String> {
+    pub fn get_psgstring(&self) -> Option<&String> {
         self.psgstring.as_ref()
     }
 
