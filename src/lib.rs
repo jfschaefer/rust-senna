@@ -6,7 +6,7 @@
 extern crate libc;
 
 mod c_signatures;
-mod util;
+pub mod util;
 pub mod senna;
 pub mod sentence;
 pub mod sennapath;
