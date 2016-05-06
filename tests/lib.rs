@@ -37,6 +37,13 @@ fn test_pos_tagging() {
 }
 
 #[test]
+/// test very long sentence
+fn test_very_long() {
+    let mut senna = Senna::new(SENNA_PATH.to_owned());
+    let sentence = senna.parse("Let mathformula be a finitely generated group of subexponential growth (e.g., mathformula); let mathformula be a finite set of generators for mathformula (e.g., the von Neumann or Moore neighborhood) and let mathformula be the set of reduced words on mathformula having at most length mathformula; let mathformula, and let mathformula be the quotient of mathformula with respect to the equivalence relation mathformula endowed with the topology induced by the distance mathformula Let mathformula be a cellular automaton over mathformula having set of states mathformula.  1.  mathformula induces in a natural way a Lipschitz continuous mathformula.  2.  mathformula is surjective if and only if mathformula is surjective.  3.  mathformula is injective if and only if it is invertible.", SennaParseOptions { pos: true, psg: true, });
+}
+
+#[test]
 /// test psg tags
 fn test_psg_tagging() {
     let mut senna = Senna::new(SENNA_PATH.to_owned());

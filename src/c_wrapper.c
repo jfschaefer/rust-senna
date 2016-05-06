@@ -190,7 +190,8 @@ const char * sennaGetPOS(const SENNA *senna, unsigned int token) {
 
 #define BUFSIZER() if (senna->strbuf.pos == senna->strbuf.length) {           \
     senna->strbuf.length *= 2;                                                \
-    senna->strbuf.ptr = (char *) malloc(senna->strbuf.length * sizeof(char)); \
+    senna->strbuf.ptr = (char *)                                              \
+             realloc(senna->strbuf.ptr, senna->strbuf.length * sizeof(char)); \
     CHECK_ALLOC(senna->strbuf.ptr);                                           \
   }
 
